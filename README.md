@@ -1,2 +1,2 @@
 # Blockchain-Assignment-2
-assignment 2 implementation for Blockchain Technology Fundamentals
+Our code has been implementated to demonstrate and complete the implementation sections of the  Blockchain Technology Fundamentals Assignment 2
