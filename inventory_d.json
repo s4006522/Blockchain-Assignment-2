@@ -1,8 +1,11 @@
 {
-   "inventory_d": {
-      "item_id": "004",
-      "item_qty": 12,
-      "iten_price": 18,
-      "location": "D"
-   }
+   "inventory_d": 
+      
+      {
+         
+         "item_id": "001",
+         "item_qty": 32,
+         "iten_price": 12,
+         "location": "D"
+      } 
 }
