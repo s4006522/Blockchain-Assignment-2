@@ -1,17 +1,6 @@
-# Task 1
-# Part 1 Creating PK and SK
-from flask import Flask, render_template, request, redirect, url_for, flash, session
 import hashlib
 import json
 import os
-
-app = Flask(__name__) # Set up Flask app
-
-@app.route('/') # Defining the route for the index page
-def index():
-    return render_template('index.html')
-
-
 
 # # Making the hashing algorithm for the inventory values
 hash_algorithm = 'md5' # Hash algorithm to be used
@@ -19,8 +8,9 @@ hash_algorithm = 'md5' # Hash algorithm to be used
 # Opening and using json to retrieve the data
 with open('inventory_d.json', 'r') as file:
     key_data = json.load(file)
-key_data["inventory_d"]
 inventory_d_data = key_data["inventory_d"]
+
+inventory_d_data = inventory_d_data[0]
 
 item_id = inventory_d_data["item_id"]
 item_qty = inventory_d_data["item_qty"]
@@ -30,11 +20,34 @@ string = item_id + str(item_qty) + str(iten_price)+ location
 print(inventory_d_data)
 
 
+# loading the private key for d  to test the signing.
+with open("d_pk_sk.json", "r") as file:
+    d_pk_sk = json.load(file)
+
+d_private_key = d_pk_sk["private_key"]
+
+d_d = d_private_key["d"]
+d_n = d_private_key["n"]
 
 
+
+#  hashing the inventory value of d
 hash_result = hashlib.md5(string.encode()).hexdigest()
+
+hash_result_decimal =int(hash_result,16)
 print(string)
-print(f"Hash result: {hash_result}")
+print(f"Hash result: {hash_result_decimal}")
+
+
+print("signed message")
+
+signed_d = pow(hash_result_decimal, d_d, d_n)
+
+print(signed_d)
+
+
+# print(key_data["inventory_d"][1])
+
 
 # # Opening and using json to retrieve the data
 # with open('list_of_keys.json', 'r') as file:
@@ -137,6 +150,3 @@ print(f"Hash result: {hash_result}")
 #     with open('inventory_d.json', 'w') as file:
 #         json.dump(message, file, indent=3)
 # inventory_d_record_creation()
-
-
-app.run(debug=True)
