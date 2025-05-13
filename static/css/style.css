@@ -1,0 +1,46 @@
+body{
+    border: 10px;
+    border-color: black;
+}
+textarea{
+    background-color: #5959aa;
+    border: 10px, skyblue;
+
+}
+button{
+    background-color: #5959aa;
+    border: 10px;
+}
+div{
+    border: 10px;
+}
+.result-box {
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 8p;
+  padding: 20px;
+  margin: 30px auto;
+  max-width: 700%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.result-box h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.result-box p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.result-box code {
+  display: block;
+  background: #f4f4f4;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  overflow-x: auto;
+}

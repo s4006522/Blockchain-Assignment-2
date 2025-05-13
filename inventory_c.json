@@ -1,8 +1,5 @@
 {
    "inventory_c": {
-      "item_id": "004",
-      "item_qty": 12,
-      "iten_price": 18,
-      "location": "C"
+      "0": "0022014C"
    }
 }

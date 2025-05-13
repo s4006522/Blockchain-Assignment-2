@@ -1,8 +1,5 @@
 {
    "inventory_b": {
-      "item_id": "004",
-      "item_qty": 12,
-      "iten_price": 18,
-      "location": "B"
+      "0": "0032216B"
    }
 }

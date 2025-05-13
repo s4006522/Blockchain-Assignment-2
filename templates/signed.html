@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<main>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignment 2</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  </head>
+  <body>
+    <div class = "result-box">
+    Original Message: {{ message }} <br>
+    Inventory Selected: {{ inventory }} <br>
+    Original Message: {{ md5_hash }} <br>
+    <br>
+        The Signature was created using the private key of the selected inventory and the computed Decimal MD5 hash.<br>
+        Signature = m<sup>d</sup> mod n <br>
+        where m is the decimal MD5 hash, d is the private key of the selected inventory and n is the public key of the selected inventory.<br>
+        Signature = {{ md5_hash}}<sup>{{private_key}}</sup> mod {{ public_key }} <br></br>
+        Signature: <br> <textarea>{{ signature }}</textarea>
+    </div>
+    <button id="back_button" onclick="window.location.href='/'">Back</button>
+  </body>
+</main>
+</html>

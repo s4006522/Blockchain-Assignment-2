@@ -5,25 +5,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Assignment 2</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css')}}" />
   </head>
   <body>
+
     <header>
       <h1>Task 1: </h1>
       <search>
         <input type="text" id="search"/>
         <button id="search_button">Search</button>
       </search>
-      <form id =sign_message_form, method = "post">
-        <label for="message">Message:</label>
-        <input type="text" id="message" name="message" required />
-      <button id ="sign_message">Sign Message</button>
+      <br>
+      <div class = result-box>
+      <form id ="form" action="/sign" method="post">
+        <p> Enter Stock information as one string</p>
+        <input type="text" id="message" name = "message" required/><br>
+        <p>Please Chose which inventory to send stock</p>
+        <input type="radio" id="inv_a" name="action" value="a" checked/>
+        <label for="inv_a">Inventory A</label><br>
+        <input type="radio" id="inv_b" name="action" value="b"/>
+        <label for="inv_b">Inventory B</label><br>
+        <input type="radio" id="inv_c" name="action" value="c"/>
+        <label for="inv_c">Inventory C</label><br>  
+        <input type="radio" id="inv_d" name="action" value="d"/>
+        <label for="inv_d">Inventory D</label><br><br>
+        <button id ="sign_message" type = "submit">Sign Message</button>
       </form>
+      <br>
+      </div>
     </header>
-    <section id="content">
-      <p>Assignment 2</p>
-    </section>
-    <script src="project_src_code_part_1.js"></script>
+    <script src="{{ url_for('static', filename='js/part_1.js') }}" ></script>
   </body>
 </main>
 </html>
