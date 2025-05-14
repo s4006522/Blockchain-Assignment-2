@@ -8,38 +8,6 @@ import os
 
 app = Flask(__name__) # Set up Flask app
 
-# # # Making the hashing algorithm for the inventory values
-# hash_algorithm = 'md5' # Hash algorithm to be used
-
-# # Opening and using json to retrieve the data
-# with open('inventory_d.json', 'r') as file:
-#     key_data = json.load(file)
-# inventory_d_data = key_data["inventory_d"]
-
-# # loading the private key for d  to test the signing.
-# with open("d_pk_sk.json", "r") as file:
-#     d_pk_sk = json.load(file)
-
-# d_private_key = d_pk_sk["private_key"]
-
-# d_d = d_private_key["d"]
-# d_n = d_private_key["n"]
-
-
-
-# #  hashing the inventory value of d
-# hash_result = hashlib.md5(string.encode()).hexdigest()
-
-# hash_result_decimal =int(hash_result,16)
-# print(string)
-# print(f"Hash result: {hash_result_decimal}")
-
-
-# print("signed message")
-
-# signed_d = pow(hash_result_decimal, d_d, d_n)
-
-# print(signed_d)
 
 @app.route('/') # Defining the route for the index page
 def index():
@@ -87,6 +55,10 @@ def sign():
         public_key = n
 
     )
+@app.route('/task3', methods=['POST']) # Defining the route for the verify page
+def task3():
+    return render_template('task3.html')
+    # Get the message and signature from the form
 
 
 if __name__ == '__main__':
