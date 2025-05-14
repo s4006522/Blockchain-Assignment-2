@@ -50,20 +50,26 @@ def sign():
     message = request.form['message']
     selected_inventory = request.form['action']
     # checking the selected inventory based on the selected radio button, We did this beacuse we have multiple inventories
-    database_file = f"{selected_inventory}_pk_sk.json"
+    list_of_keys = "list_of_keys.json"
     # Load key data from JSON
-    with open(database_file, 'r') as f:
+    with open(list_of_keys, 'r') as f:
         key_data = json.load(f)
-    # Accessing the keys
-    public_key = key_data['public_key']
-    private_key = key_data['private_key']
-    # Extracting the public key values
-    e = public_key['e']
-    n = public_key['n']
-    # Extracting the values of d and n from the private key
-    d = int(private_key['d'])
-    n = int(private_key['n'])
+    
+    # # Accessing the keys depending on the inventory selected
+    p = key_data[f'inventory_{selected_inventory}_keys']['p']
+    q = key_data[f'inventory_{selected_inventory}_keys']['q']
+    e = key_data[f'inventory_{selected_inventory}_keys']['e']
 
+    # # Calculating n
+    n = p * q
+    
+    # # Calculating phi
+    phi = (p - 1) * (q - 1)
+    
+    # # Calculating d
+    d = pow(e, -1, phi)
+
+    # # After Private key is calculated, we can now sign the message
     # Hashing the message using MD5 and converting to decimal
     md5_hash_hex = hashlib.md5(message.encode()).hexdigest()
     md5_hash_decimal = int(md5_hash_hex, 16) 
