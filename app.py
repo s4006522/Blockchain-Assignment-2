@@ -1,5 +1,6 @@
 # Starting the application with Flask
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from poaConsensus import run_poa_consensus 
 import hashlib
 import json
 import os
@@ -43,6 +44,8 @@ def sign():
     md5_hash_decimal = int(md5_hash_hex, 16) 
     # calculating the signature using s = m^d mod n
     signature = pow(md5_hash_decimal, d, n)
+    inv_output = message + selected_inventory.upper()
+    accepted, votes = run_poa_consensus(inv_output)
 
     # Display everything
     return render_template(
