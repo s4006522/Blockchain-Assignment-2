@@ -1,6 +1,6 @@
 # Starting the application with Flask
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from poaConsensus import run_poa_consensus 
+from poa_consensus import run_poa_consensus 
 import hashlib
 import json
 import os
