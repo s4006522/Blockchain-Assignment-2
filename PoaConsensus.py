@@ -1,7 +1,6 @@
 import json
 import hashlib
 import os
-from sympy import mod_inverse
 
 # Implementation of consensus protocol (proof-of-authority) for the Warehouse supply-chain System 
 
@@ -17,7 +16,7 @@ def generate_all_keypairs():
         e = values['e']
         n = p * q
         phi = (p - 1) * (q - 1)
-        d = mod_inverse(e, phi)
+        d = pow(e, -1, phi)
         keypairs[name] = {
             "public_key": {"e": e, "n": n},
             "private_key": {"d": d, "n": n}
