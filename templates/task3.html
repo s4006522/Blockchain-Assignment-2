@@ -8,7 +8,17 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
     <body>
-       Test {{key}} Test
+       <h2>Item Result: ID = {{ search_query }}</h2>
+
+    {% if results %}
+
+      {% for inv, record in results.items() %}
+    <strong>Warehouse {{ inv }}</strong>: {{ record }}
+      {% endfor %}
+      
+    {% else %}
+      <p>No matching item found in any inventory.</p>
+    {% endif %}
 
     </body>
 </main>
