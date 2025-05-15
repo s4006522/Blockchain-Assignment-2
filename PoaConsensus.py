@@ -64,6 +64,12 @@ def store_record_to_inventories(record_string):
 
 # Run the PoA consensus
 def run_poa_consensus(record_string):
+    if not record_string or record_string[-1] not in ['A', 'B', 'C', 'D']:
+        return False, 0
+    
+    if not record_string[:-1].isdigit():
+        return False, 0
+    
     keypairs = generate_all_keypairs()
     approvals = 0
 
@@ -76,3 +82,31 @@ def run_poa_consensus(record_string):
         return True, approvals
     else:
         return False, approvals
+    
+
+# RECORD EXAMPLES (TESTING)
+
+# # TEST 1 - Expected Output: PASS
+# test_record = "0041218A"
+# result, votes = run_poa_consensus(test_record)
+# print("TEST 1: Consensus successful" if result else "TEST 1: Consensus failed")
+
+# # TEST 2 - Expected Output: PASS
+# test_record = "9123891D"
+# result, votes = run_poa_consensus(test_record)
+# print("TEST 2: Consensus successful" if result else "TEST 2: Consensus failed")
+
+# TEST 3 - Expected Output: FAIL — no warehouse location provided
+# test_record = "0041218"
+# result, votes = run_poa_consensus(test_record)
+# print("TEST 3: Consensus successful" if result else "TEST 3: Consensus failed")
+
+# # TEST 4 - Expected Output: FAIL — missing pice of data (price value not provided)
+# test_record = "0041218E"
+# result, votes = run_poa_consensus(test_record)
+# print("TEST 4: Consensus successful" if result else "TEST 4: Consensus failed")
+
+# # TEST 5 - Expected Output: FAIL — Invalid data (non-numeric values)
+# test_record = "fj49g@$#@Y9Ggkdkg"
+# result, votes = run_poa_consensus(test_record)
+# print("TEST 5: Consensus successful" if result else "TEST 5: Consensus failed")
