@@ -54,7 +54,10 @@ def task3():
                 data = json.load(f)
                 inventory_data = data.get(key, {})
 
-                for record, value in inventory_data.items():
+                for record_id, record_value in inventory_data.items():
+                    if record_value[:3] == search_query:
+                        quantity = record_value[3:5]
+                        result[inv.upper()] = quantity
 
                     ID = keys["id_of_inventories"][inv]
                     r = keys["random_inventory_number"][inv]
@@ -71,20 +74,27 @@ def task3():
                         "t_i": t_i
                     
                     })
-                    if value[:3] == search_query:
-                            result = value[3:5]
                         
         except FileNotFoundError:
             flash(f"File {file} not found.", "error")
             continue
 
 
-    if result:
+        # encryption and Decryption of aggregate T value using officer key (consensus process implementation)
+        encrypted_t_aggregate = pow(t_aggregate, officer["e"], officer_n)
+        decrypted_t_aggregate = pow(encrypted_t_aggregate, officer_d, officer_n)
+        
+        #check if consensus is valid
+        is_valid = (decrypted_t_aggregate == t_aggregate)
+
+    if is_valid:
         # Consensus To validate all parties obtaining the correct same signature.
         # Adding the t_aggregate and search query into one message to hash and send to user who requested it
-        hashed_message = hashlib.md5((str(t_aggregate) + result).encode()).hexdigest()
+        message_string = "".join(result.values())
+        hashed_message = hashlib.md5((str(t_aggregate) + message_string).encode()).hexdigest()
         # converting to decimal
         hashed_message_decimal = int(hashed_message, 16)
+
         # Step: Compute s_j for each inventory
         s_values = []
         for sig in partial_sigs:
@@ -113,16 +123,14 @@ def task3():
         t_power = pow(t_aggregate, hashed_message_decimal, pkg_n)
         verification_2 = (g_product * t_power) % pkg_n
 
-        signature_valid = False
-
-        if verification_1 == verification_2:
-            signature_valid = True
-        else:
-            signature_valid = False            
+        signature_valid = verification_1 == verification_2
 
     else:
-        message = None
-  
+        hashed_message = None
+        s_values = []
+        s = None
+        verification_1 = None
+        verification_2 = None
 
 
     return render_template("task3.html", 
@@ -141,6 +149,7 @@ def task3():
                            signature_valid = signature_valid,
                            hashed_message = hashed_message,
                            s_j = s_j,
+                           s_values = s_values,
                            s = s,
                            verification_1 = verification_1,
                            verification_2 = verification_2)
