@@ -9,16 +9,41 @@
     </head>
     <body>
        <h2>Item Result: ID = {{ search_query }}</h2>
-
-    {% if results %}
+       <div class = result-box>
+        Steps, of how the inventories Calculate their keys. <br>
+        How the keys were made using the "list_of_keys" document. <br>
+        The p, q, and e <br>
+        {{pkg}} <br>
+        n = p x q <br>
+        pkg_n = {{pkg["p"]}} x {{pkg["q"]}} <br>
+        pkg_n = {{pkg_n}}<br>
+        phi = (p-1) x (q-1)<br>
+        pkg_phi = ({{pkg["p"]}} - 1) x ({{pkg["q"]}} - 1)<br>
+        pkg_phi = {{pkg_phi_n}} <br>
+        <br>
+        Now Calculating the private key<br>
+        d = e<sup>-1</sup> mod pkg_phi<br>
+        pkg_d = {{pkg["e"]}}<sup>-1</sup> mod {{pkg_phi_n}}<br>
+        pkg_d = {{pkg_d}}<br>
+        <br>
+        Searching the inventory records: <br>
+     {% if results %}
 
       {% for inv, record in results.items() %}
     <strong>Warehouse {{ inv }}</strong>: {{ record }}
+        Signature generation: After result has been found:<br>
+        The PKG generates the secret key for each inventory using an ID assosiated with each of them
+         
       {% endfor %}
       
     {% else %}
       <p>No matching item found in any inventory.</p>
     {% endif %}
+      <br>
+
+
+
+       </div>
 
     </body>
 </main>

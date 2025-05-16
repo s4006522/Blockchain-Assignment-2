@@ -91,7 +91,15 @@ def task3():
                            aggregated_signature=t_aggregate,
                            encrypted_signature=encrypted_t_aggregate,
                            decrypted_signature=decrypted_t_aggregate,
-                           is_valid=is_valid)
+                           is_valid=is_valid,
+                           ID = ID,
+                           r = r,
+                           g_i = g_i,
+                           t_i = t_i,
+                           pkg_n = pkg_n,
+                           pkg_phi_n = pkg_phi_n,
+                           pkg_d = pkg_d,
+                           pkg = pkg)
     # Get the message and signature from the form
 # THIS IS  ATEST
 
