@@ -9,6 +9,7 @@
     </head>
     <body>
        <h2>Item Result: ID = {{ search_query }}</h2>
+    {% if results and results|length > 0%} 
        <div class = result-box>
         Steps, of how the inventories Calculate their keys. <br>
         How the keys were made using the "list_of_keys" document. <br>
@@ -26,15 +27,30 @@
         pkg_d = {{pkg["e"]}}<sup>-1</sup> mod {{pkg_phi_n}}<br>
         pkg_d = {{pkg_d}}<br>
         <br>
-        Searching the inventory records: <br>
-     {% if results %}
-
-      {% for inv, record in results.items() %}
-    <strong>Warehouse {{ inv }}</strong>: {{ record }}
+        Searching the inventory records: Found <br>
+        <strong>Warehouse {{ inv }}</strong>: {{ record }}<br>
         Signature generation: After result has been found:<br>
-        The PKG generates the secret key for each inventory using an ID assosiated with each of them
-         
-      {% endfor %}
+        The PKG generates the secret key for each inventory using an ID assosiated with each of them <br>
+        Id for A: 126, B: 127, C: 128, D: 129 <br>
+        Secret keys for each inventory are computed using this formula:<br>
+        g<sub>x</sub> = id<sup>x</sup> mod {{pkg_n}} <br>
+        The signers then have a random number associated with them Which they use to calculate "t<sub>x</sub>":<br>
+        t<sub>x</sub> = r<sub>x</sub><sup>e</sup> mod {{pkg_n}} <br>
+        The aggregated t: <br>
+        t = (t1 x t2 x t3 x t4 ...) mod n <br>
+        aggregated t = {{aggregated_signature}} <br>
+        Next we send the search results and initiate the consensus: <br>
+        The consensus follows This: <br>
+        If every calculated t value is not the same the consensus will fail if they are the same it will pass.<br>
+        <br>
+        {{partial_sigs}}<br>
+        {{verification_1}} <br>
+        {{verification_2}}<br>
+        {{results}}<br>
+        {{s,s_j}}
+
+
+
       
     {% else %}
       <p>No matching item found in any inventory.</p>

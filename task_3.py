@@ -54,44 +54,82 @@ def task3():
                 data = json.load(f)
                 inventory_data = data.get(key, {})
 
-                for idx, record in inventory_data.items():
-                    if record[:3] == search_query:
-                        result[inv.upper()] = record
+                for record, value in inventory_data.items():
 
-                        ID = keys["id_of_inventories"][inv]
-                        r = keys["random_inventory_number"][inv]
+                    ID = keys["id_of_inventories"][inv]
+                    r = keys["random_inventory_number"][inv]
 
-                        g_i = pow(ID, pkg_d, pkg_n)
-                        t_i = pow(r, pkg["e"], pkg_n)
+                    g_i = pow(ID, pkg_d, pkg_n)
+                    t_i = pow(r, pkg["e"], pkg_n)
 
-                        t_aggregate = (t_aggregate * t_i) % pkg_n
+                    t_aggregate = (t_aggregate * t_i) % pkg_n
                        
                        #append the partial signature
-                        partial_sigs.append({
-                            "g_i": g_i,
-                            "r_i": r,
-                            "t_i": t_i
-                        })
+                    partial_sigs.append({
+                        "g_i": g_i,
+                        "r_i": r,
+                        "t_i": t_i
+                    
+                    })
+                    if value[:3] == search_query:
+                            result = value[3:5]
                         
         except FileNotFoundError:
             flash(f"File {file} not found.", "error")
             continue
 
-        # Encrypt/decrypt T using procurement officer's keys (consensus process)
-        encrypted_t_aggregate = pow(t_aggregate, officer["e"], officer_n)
-        decrypted_t_aggregate = pow(encrypted_t_aggregate, officer_d, officer_n)
 
-        # Check if consensus is valid
-        is_valid = (decrypted_t_aggregate == t_aggregate)
+    if result:
+        # Consensus To validate all parties obtaining the correct same signature.
+        # Adding the t_aggregate and search query into one message to hash and send to user who requested it
+        hashed_message = hashlib.md5((str(t_aggregate) + result).encode()).hexdigest()
+        # converting to decimal
+        hashed_message_decimal = int(hashed_message, 16)
+        # Step: Compute s_j for each inventory
+        s_values = []
+        for sig in partial_sigs:
+            g_j = sig["g_i"]
+            r_j = sig["r_i"]
+            # maiking it easier to calculate s_j by already calculating the second half of the message.
+            rj_exp = pow(r_j, hashed_message_decimal, pkg_n)
+            # Calculating each signed message.
+            s_j = (g_j * rj_exp) % pkg_n
+            s_values.append(s_j)
+
+        # Now calculating the aggregate of the signed message
+        s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
+        for sj in s_values:
+            s = (s * sj) % pkg_n
+
+        # After everything is calulated (t, s, message)
+        # time to do the verification which after we can send to the user.
+        verification_1 = pow(s, pkg["e"], pkg_n)
+
+        # Verification Right:
+        g_product = 1
+        for sig in partial_sigs:
+            g_product = (g_product * sig["g_i"]) % pkg_n
+
+        t_power = pow(t_aggregate, hashed_message_decimal, pkg_n)
+        verification_2 = (g_product * t_power) % pkg_n
+
+        signature_valid = False
+
+        if verification_1 == verification_2:
+            signature_valid = True
+        else:
+            signature_valid = False            
+
+    else:
+        message = None
+  
+
 
     return render_template("task3.html", 
                            search_query=search_query, 
                            results=result,
                            partial_sigs=partial_sigs,
                            aggregated_signature=t_aggregate,
-                           encrypted_signature=encrypted_t_aggregate,
-                           decrypted_signature=decrypted_t_aggregate,
-                           is_valid=is_valid,
                            ID = ID,
                            r = r,
                            g_i = g_i,
@@ -99,7 +137,13 @@ def task3():
                            pkg_n = pkg_n,
                            pkg_phi_n = pkg_phi_n,
                            pkg_d = pkg_d,
-                           pkg = pkg)
+                           pkg = pkg,
+                           signature_valid = signature_valid,
+                           hashed_message = hashed_message,
+                           s_j = s_j,
+                           s = s,
+                           verification_1 = verification_1,
+                           verification_2 = verification_2)
     # Get the message and signature from the form
 # THIS IS  ATEST
 
