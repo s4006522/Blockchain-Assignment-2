@@ -20,6 +20,14 @@
         where m is the decimal MD5 hash, d is the private key of the selected inventory and n is the public key of the selected inventory.<br>
         Signature = {{ md5_hash}}<sup>{{private_key}}</sup> mod {{ public_key }} <br></br>
         Signature: <br> <textarea>{{ signature }}</textarea>
+
+        <hr>
+        Consensus Protocol Result:<br>
+        {% if accepted %}
+          Consensus <strong>Successful</strong> with {{ votes }} approvals.
+        {% else %}
+          Consensus <strong>Failed</strong>. with {{ votes }} approvals.
+        {% endif %}
     </div>
     <button id="back_button" onclick="window.location.href='/'">Back</button>
   </body>

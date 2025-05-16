@@ -6,11 +6,12 @@ import os
 
 # Load key data from list_of_keys.json and generate RSA key pairs for all inventories
 def generate_all_keypairs():
-    with open('list_of_keys.json', 'r') as keys:
-        warehouse_keys = json.load(keys)
+    with open('list_of_keys.json', 'r') as keys_file:
+        warehouse_keys = json.load(keys_file)
     
     keypairs = {}
-    for name, values in warehouse_keys.items():
+    for name in['inventory_a_keys', 'inventory_b_keys', 'inventory_c_keys', 'inventory_d_keys']:
+        values = warehouse_keys[name]
         p = values['p']
         q = values['q']
         e = values['e']

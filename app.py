@@ -55,7 +55,9 @@ def sign():
         md5_hash=md5_hash_decimal,
         signature=signature,
         private_key = d,
-        public_key = n
+        public_key = n,
+        accepted=accepted,
+        votes=votes
 
     )
 @app.route('/task3', methods=['POST']) # Defining the route for the verify page
