@@ -62,18 +62,20 @@
             <strong>Verification 1 (s<sup>e</sup> mod n) = </strong> {{ verification_1 }}<br>
             <strong>Verification 2 ((∏ i<sub>x</sub>x t)<sup>Hash(t,m)</sup> mod n) = </strong> {{ verification_2 }}<br><br>
 
-            <strong>Verification 1 and Verification 2, therefore Multi-Signature is verified</strong><br>
+            <strong>Verification 1 and Verification 2, therefore Multi-Signature is verified</strong><br> <br>
+
             <strong>Now The Encrypted Message can be sent to the user</strong><br>
-            The message is calculated using the Officers Public key:<br>
-            {{officer_pub}}<br>
-            Encrypted Message = {{item_qty}}<sup>{{officer_pub[0]}}</sup> mod {{officer_pub[1]}}<br>
-            Encrypted Message = {{encrypted_message}}<br>
+            <strong>message is calculated using the Officers Public key:</strong> <br>
+            {{officer_pub}}<br><br>
+            <strong>Encrypted Message =</strong> {{item_qty}}<sup>{{officer_pub[0]}}</sup> mod {{officer_pub[1]}}<br><br>
+            <strong>Encrypted Message = </strong>{{encrypted_message}}<br><br>
+            
             <strong>Decryption By the user</strong><br>
-            Now that the user has the encrypted message they can use their private keys to decrypt:<br>
-            Officers private key: {{officers_priv}}<br>
+            Now that the user has the encrypted message they can use their private keys to decrypt:<br><br>
+            <strong>Officers private key: </strong>{{officer_priv}}<br><br>
             <strong>Decrypted Results:</strong><br>
-            Decrypted Message = {{encrypted_message}}<sup>{{officer_priv[0]}}</sup> mod {{officer_priv[1]}}<br>
-            Decrypted Message = {{decrypted_message}}<br>
+            <strong>Decrypted Message =</strong> {{encrypted_message}}<sup>{{officer_priv[0]}}</sup> mod {{officer_priv[1]}}<br><br>
+            <strong>Decrypted Message =</strong> {{decrypted_message}}<br><br>
             Now the user knows that ID {{found_id}} contains {{decrypted_message}} number of items.
 
             
