@@ -8,55 +8,65 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
     <body>
-       <h2>Item Result: ID = {{ search_query }}</h2>
-    {% if results and results|length > 0%} 
-       <div class = result-box>
-        Steps, of how the inventories Calculate their keys. <br>
-        How the keys were made using the "list_of_keys" document. <br>
-        The p, q, and e <br>
-        {{pkg}} <br>
-        n = p x q <br>
-        pkg_n = {{pkg["p"]}} x {{pkg["q"]}} <br>
-        pkg_n = {{pkg_n}}<br>
-        phi = (p-1) x (q-1)<br>
-        pkg_phi = ({{pkg["p"]}} - 1) x ({{pkg["q"]}} - 1)<br>
-        pkg_phi = {{pkg_phi_n}} <br>
-        <br>
-        Now Calculating the private key<br>
-        d = e<sup>-1</sup> mod pkg_phi<br>
-        pkg_d = {{pkg["e"]}}<sup>-1</sup> mod {{pkg_phi_n}}<br>
-        pkg_d = {{pkg_d}}<br>
-        <br>
-        Searching the inventory records: Found <br>
-        <strong>Warehouse {{ inv }}</strong>: {{ record }}<br>
-        Signature generation: After result has been found:<br>
-        The PKG generates the secret key for each inventory using an ID assosiated with each of them <br>
-        Id for A: 126, B: 127, C: 128, D: 129 <br>
-        Secret keys for each inventory are computed using this formula:<br>
-        g<sub>x</sub> = id<sup>x</sup> mod {{pkg_n}} <br>
-        The signers then have a random number associated with them Which they use to calculate "t<sub>x</sub>":<br>
-        t<sub>x</sub> = r<sub>x</sub><sup>e</sup> mod {{pkg_n}} <br>
-        The aggregated t: <br>
-        t = (t1 x t2 x t3 x t4 ...) mod n <br>
-        aggregated t = {{aggregated_signature}} <br>
-        Next we send the search results and initiate the consensus: <br>
-        The consensus follows This: <br>
-        If every calculated t value is not the same the consensus will fail if they are the same it will pass.<br>
-        <br>
-        {{verification_1}} <br>
-        {{verification_2}}<br>
-        {{results}}<br>
-        <br>
-        {{item_qty}}<br>
-        {{encrypted_message}}<br>
+      <h2>Item Result: ID = {{ search_query }}</h2>
 
+        {% if results and results|length > 0 %}
+        <div class="result-box">
+            <h2>Item Quantity: {{ item_qty }}</h2> <br>
 
+            <h3>PKG Key Setup</h3>
+            <strong>PKG Key Values:</strong><br>
+            p: {{ pkg["p"] }} <br>
+            q : {{ pkg["q"] }}<br>
+            e: {{ pkg["e"] }}<br> <br>
 
+            <strong>n = p × q:</strong> {{ pkg["p"] }} × {{ pkg["q"] }} <br> <br>
+             <strong>n = </strong> {{ pkg_n }}<br> <br> 
 
-      
-    {% else %}
-      <p>No matching item found in any inventory.</p>
-    {% endif %}
+            <strong>φ(n) = (p − 1) × (q − 1):</strong> ({{ pkg["p"] }} - 1) × ({{ pkg["q"] }} - 1) <br> <br>
+             <strong>φ(n) = </strong>{{ pkg_phi_n }}<br> <br>
+
+            <strong>d = e⁻¹ mod φ(n):</strong> {{ pkg["e"] }}⁻¹ mod {{ pkg_phi_n }} = {{ pkg_d }}<br><br>
+
+            <h3> Inventory Record Match</h3>
+            <strong>Found in: </strong> Warehouse {{ matched_warehouse }}<br>
+            <strong>Record: </strong>{{ matched_record }}<br><br>
+
+            <h3>Signature Generation</h3>
+            <strong>Each inventory has an associated ID:</strong><br>
+            A = 126, B = 127, C = 128, D = 129<br> <br>
+
+            <strong>Secret keys for each inventory are computed using this formula:</strong> <br><br> 
+            g<sub>x</sub> = id<sup>x</sup> mod {{ pkg_n }}<br><br>
+
+            Signers then have a random number associated with them Which they use to calculate: <br>
+            t<sub>x</sub> = r<sub>x</sub><sup>e</sup> mod {{ pkg_n }}<br><br>
+
+            <h3>Aggregated T Signature</h3>
+            t = (t1 x t2 x t3 x t4) mod n<br> <br>
+            aggregated t: {{ aggregated_signature }}<br><br>
+
+            <h3>Multi-Signature</h3> 
+            <strong>The message from each wherehouse is signed to get s<sub>x</sub></strong> <br>
+            s<sub>x</sub> = (g<sub>x</sub> x r<sub>x</sub>)<sup>(hash(t, m))</sup> mod n<br><br>
+
+            <strong>Then aggregated s is calculated</strong><br>
+            s = (s1 x s2 x s3 x s4) mod  <br>
+            s = {{s}} <br><br>
+
+            <strong>Then we have the final signature (m, t, s)</strong><br>
+            (m, t, s) = ({{ aggregated_signature }}, {{s}}, {{hashed_message_decimal}})<br><br>
+
+            <h3>Multi-Signature Verification </h3>
+           <strong>Two verification equations are used to verify the validity of the Multi-Signature</strong> <br> <br>
+            <strong>Verification 1 (s<sup>e</sup> mod n) = </strong> {{ verification_1 }}<br>
+            <strong>Verification 2 ((∏ i<sub>x</sub>x t)<sup>Hash(t,m)</sup> mod n) = </strong> {{ verification_2 }}<br><br>
+
+            <strong>Verification 1 and Verification 2, therefore Multi-Signature is verified</strong> 
+        </div>
+        {% else %}
+        <p>No matching item found in any inventory.</p>
+        {% endif %}
       <br>
 
 

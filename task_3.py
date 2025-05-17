@@ -68,6 +68,8 @@ def task3():
                 if record_value[:3] == found_id:
                     quantity = record_value[3:5]
                     result[inv.upper()] = quantity
+                    matched_record = record_value
+                    matched_warehouse = record_value[-1]
                     id_found = True
             
             if id_found:
@@ -92,7 +94,6 @@ def task3():
     
     item_qty = next(iter(result.values()))
 
-    # Consensus To validate all parties obtaining the correct same signature.
     # Adding the t_aggregate and search query into one message to hash and send to user who requested it
     hash_input = f"{t_aggregate}{item_qty}"
     hashed_message = hashlib.md5(hash_input.encode()).hexdigest()
@@ -114,6 +115,9 @@ def task3():
     s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
     for sj in s_values:
         s = (s * sj) % pkg_n
+    
+    # Consensus To validate all parties obtaining the correct same signature (t,s,m).
+    # Encrypt the values using the officer's public key
 
     # After everything is calulated (t, s, message)
     # time to do the verification which after we can send to the user.
@@ -152,8 +156,11 @@ def task3():
                            pkg_phi_n = pkg_phi_n,
                            pkg_d = pkg_d,
                            pkg = pkg,
+                           matched_record = matched_record,
+                           matched_warehouse = matched_warehouse,
                            signature_valid = signature_valid,
                            hashed_message = hashed_message,
+                           hashed_message_decimal = hashed_message_decimal,
                            s_j = s_i,
                            s_values = s_values,
                            s = s,
@@ -161,7 +168,9 @@ def task3():
                            verification_2 = verification_2,
                            item_qty = item_qty,
                            hash = hash_input,
-                           encrypted_message = encrypted_message)
+                           encrypted_message = encrypted_message,
+                           )
+
     # Get the message and signature from the form
 # THIS IS  ATEST
 

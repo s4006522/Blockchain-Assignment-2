@@ -63,7 +63,7 @@ def store_record_to_inventories(record_string):
             json.dump(data, f, indent=4)
 
 # Run the PoA consensus
-def run_poa_consensus(record_string):
+def run_poa_consensus(record_string, chosen_inventory):
     if not record_string or record_string[-1] not in ['A', 'B', 'C', 'D']:
         return False, 0
     
@@ -74,10 +74,13 @@ def run_poa_consensus(record_string):
     approvals = 0
 
     for inv_key, pair in keypairs.items():
+        if inv_key == f'inventory_{chosen_inventory.lower()}_keys':
+            continue
+
         voted = vote_on_record(record_string, pair)
         approvals += 1 if voted else 0
 
-    if approvals >= 3:
+    if approvals == 3:
         store_record_to_inventories(record_string)
         return True, approvals
     else:
