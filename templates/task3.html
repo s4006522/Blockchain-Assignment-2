@@ -12,7 +12,11 @@
 
         {% if results and results|length > 0 %}
         <div class="result-box">
-            <h2>Item Quantity: {{ item_qty }}</h2> <br>
+            <h2>Item Quantity: {{ item_qty }}</h2>
+             <h3> Inventory Record Match</h3>
+            <strong>Found in: </strong> Warehouse {{ matched_warehouse }}<br>
+            <strong>Record: </strong>{{ matched_record }}<br><br>
+
 
             <h3>PKG Key Setup</h3>
             <strong>PKG Key Values:</strong><br>
@@ -27,10 +31,6 @@
              <strong>φ(n) = </strong>{{ pkg_phi_n }}<br> <br>
 
             <strong>d = e⁻¹ mod φ(n):</strong> {{ pkg["e"] }}⁻¹ mod {{ pkg_phi_n }} = {{ pkg_d }}<br><br>
-
-            <h3> Inventory Record Match</h3>
-            <strong>Found in: </strong> Warehouse {{ matched_warehouse }}<br>
-            <strong>Record: </strong>{{ matched_record }}<br><br>
 
             <h3>Signature Generation</h3>
             <strong>Each inventory has an associated ID:</strong><br>
