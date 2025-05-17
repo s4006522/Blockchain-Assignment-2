@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Error</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="error-box">
+    <h3>{{ message }}</h3>
+    <p> Please input an Item ID that is valid. e.g Item id 001, 002, ...</p>
+    <a href="/">
+      <button>Back</button>
+    </a>
+  </div>
+</body>
+</html>

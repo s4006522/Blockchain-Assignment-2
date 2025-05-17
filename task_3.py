@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import hashlib
 import json
-import os
+import re
 
 app = Flask(__name__) # Set up Flask app
 
@@ -14,6 +14,13 @@ def index():
 @app.route('/task3', methods=['POST']) # Defining the route for the verify page
 def task3():
     search_query = request.form["search_query"]
+    # Using regex to find the exact id in the search query.
+    search_match = re.search(r'\b\d{3}\b', search_query)
+    # If item id is not found in the search it will render a page saying Item id not found.
+    if not search_match:
+        return render_template('notfound.html', message = "Item ID not found"),400
+
+    found_id = search_match.group()
     result = {}
     partial_sigs =[]
     t_aggregate = 1 # Initialize t_aggregate to 1 to ensure correct multiplication later on
@@ -54,83 +61,82 @@ def task3():
                 data = json.load(f)
                 inventory_data = data.get(key, {})
 
-                for record_id, record_value in inventory_data.items():
-                    if record_value[:3] == search_query:
-                        quantity = record_value[3:5]
-                        result[inv.upper()] = quantity
+            # Flag to check if ID was found
+            id_found = False
 
-                    ID = keys["id_of_inventories"][inv]
-                    r = keys["random_inventory_number"][inv]
+            for record_id, record_value in inventory_data.items():
+                if record_value[:3] == found_id:
+                    quantity = record_value[3:5]
+                    result[inv.upper()] = quantity
+                    id_found = True
+            
+            if id_found:
+                Id_of_inv = int(keys["id_of_inventories"][inv])
+                r = int(keys["random_inventory_number"][inv])
 
-                    g_i = pow(ID, pkg_d, pkg_n)
-                    t_i = pow(r, pkg["e"], pkg_n)
+                g_i = pow(Id_of_inv, pkg_d, pkg_n)
+                t_i = pow(r, pkg["e"], pkg_n)
 
-                    t_aggregate = (t_aggregate * t_i) % pkg_n
-                       
-                       #append the partial signature
-                    partial_sigs.append({
-                        "g_i": g_i,
-                        "r_i": r,
-                        "t_i": t_i
-                    
-                    })
+                t_aggregate = (t_aggregate * t_i) % pkg_n
+
+                partial_sigs.append({
+                    "g_i": g_i,
+                    "r_i": r,
+                    "t_i": t_i,
+                    "id" : Id_of_inv
+                })
                         
         except FileNotFoundError:
             flash(f"File {file} not found.", "error")
             continue
+    
+    item_qty = next(iter(result.values()))
 
+    # Consensus To validate all parties obtaining the correct same signature.
+    # Adding the t_aggregate and search query into one message to hash and send to user who requested it
+    hash_input = f"{t_aggregate}{item_qty}"
+    hashed_message = hashlib.md5(hash_input.encode()).hexdigest()
+    # converting to decimal
+    hashed_message_decimal = int(hashed_message, 16)
 
-        # encryption and Decryption of aggregate T value using officer key (consensus process implementation)
-        encrypted_t_aggregate = pow(t_aggregate, officer["e"], officer_n)
-        decrypted_t_aggregate = pow(encrypted_t_aggregate, officer_d, officer_n)
+    # Step: Compute s_j for each inventory
+    s_values = []
+    for sig in partial_sigs:
+        g_i = sig["g_i"]
+        r_i = sig["r_i"]
+        # maiking it easier to calculate s_j by already calculating the second half of the message.
+        ri_exp = pow(r_i, hashed_message_decimal, pkg_n)
+        # Calculating each signed message.
+        s_i = (g_i * ri_exp) % pkg_n
+        s_values.append(s_i)
+
+    # Now calculating the aggregate of the signed message
+    s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
+    for sj in s_values:
+        s = (s * sj) % pkg_n
+
+    # After everything is calulated (t, s, message)
+    # time to do the verification which after we can send to the user.
+    verification_1 = pow(s, pkg["e"], pkg_n)
+
+    # Verification Right:
+    g_product = 1
+    for sig in partial_sigs:
+        g_product = (g_product * sig["id"]) % pkg_n
+
+    t_power = pow(t_aggregate, hashed_message_decimal, pkg_n)
+    verification_2 = (g_product * t_power) % pkg_n
+
+    signature_valid = False
         
-        #check if consensus is valid
-        is_valid = (decrypted_t_aggregate == t_aggregate)
+    # making sure both verifications match if they do then signature valid is true.
+    if verification_1 == verification_2:
+        signature_valid = True
+        # after the signature is verified sending the encrypted values
+        # this is encrypted using the officers key
+        encrypted_message = pow(int(item_qty), officer['e'], officer_n)
 
-    if is_valid:
-        # Consensus To validate all parties obtaining the correct same signature.
-        # Adding the t_aggregate and search query into one message to hash and send to user who requested it
-        message_string = "".join(result.values())
-        hashed_message = hashlib.md5((str(t_aggregate) + message_string).encode()).hexdigest()
-        # converting to decimal
-        hashed_message_decimal = int(hashed_message, 16)
 
-        # Step: Compute s_j for each inventory
-        s_values = []
-        for sig in partial_sigs:
-            g_j = sig["g_i"]
-            r_j = sig["r_i"]
-            # maiking it easier to calculate s_j by already calculating the second half of the message.
-            rj_exp = pow(r_j, hashed_message_decimal, pkg_n)
-            # Calculating each signed message.
-            s_j = (g_j * rj_exp) % pkg_n
-            s_values.append(s_j)
-
-        # Now calculating the aggregate of the signed message
-        s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
-        for sj in s_values:
-            s = (s * sj) % pkg_n
-
-        # After everything is calulated (t, s, message)
-        # time to do the verification which after we can send to the user.
-        verification_1 = pow(s, pkg["e"], pkg_n)
-
-        # Verification Right:
-        g_product = 1
-        for sig in partial_sigs:
-            g_product = (g_product * sig["g_i"]) % pkg_n
-
-        t_power = pow(t_aggregate, hashed_message_decimal, pkg_n)
-        verification_2 = (g_product * t_power) % pkg_n
-
-        signature_valid = verification_1 == verification_2
-
-    else:
-        hashed_message = None
-        s_values = []
-        s = None
-        verification_1 = None
-        verification_2 = None
 
 
     return render_template("task3.html", 
@@ -138,7 +144,7 @@ def task3():
                            results=result,
                            partial_sigs=partial_sigs,
                            aggregated_signature=t_aggregate,
-                           ID = ID,
+                           ID = Id_of_inv,
                            r = r,
                            g_i = g_i,
                            t_i = t_i,
@@ -148,11 +154,14 @@ def task3():
                            pkg = pkg,
                            signature_valid = signature_valid,
                            hashed_message = hashed_message,
-                           s_j = s_j,
+                           s_j = s_i,
                            s_values = s_values,
                            s = s,
                            verification_1 = verification_1,
-                           verification_2 = verification_2)
+                           verification_2 = verification_2,
+                           item_qty = item_qty,
+                           hash = hash_input,
+                           encrypted_message = encrypted_message)
     # Get the message and signature from the form
 # THIS IS  ATEST
 
