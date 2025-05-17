@@ -20,10 +20,10 @@
             q : {{ pkg["q"] }}<br>
             e: {{ pkg["e"] }}<br> <br>
 
-            <strong>n = p x q:</strong> {{ pkg["p"] }} x {{ pkg["q"] }} <br> <br>
+            <strong>n = p × q:</strong> {{ pkg["p"] }} × {{ pkg["q"] }} <br> <br>
              <strong>n = </strong> {{ pkg_n }}<br> <br> 
 
-            <strong>φ(n) = (p - 1) x (q - 1):</strong> ({{ pkg["p"] }} - 1) x ({{ pkg["q"] }} - 1) <br> <br>
+            <strong>φ(n) = (p − 1) × (q − 1):</strong> ({{ pkg["p"] }} - 1) × ({{ pkg["q"] }} - 1) <br> <br>
              <strong>φ(n) = </strong>{{ pkg_phi_n }}<br> <br>
 
             <strong>d = e⁻¹ mod φ(n):</strong> {{ pkg["e"] }}⁻¹ mod {{ pkg_phi_n }} = {{ pkg_d }}<br><br>
@@ -58,11 +58,26 @@
             (m, t, s) = ({{ aggregated_signature }}, {{s}}, {{hashed_message_decimal}})<br><br>
 
             <h3>Multi-Signature Verification </h3>
-           <strong>Two verification equations are used to verify the validity of the Multi-Signature</strong> <br> <br>
+            <strong>Two verification equations are used to verify the validity of the Multi-Signature</strong> <br> <br>
             <strong>Verification 1 (s<sup>e</sup> mod n) = </strong> {{ verification_1 }}<br>
             <strong>Verification 2 ((∏ i<sub>x</sub>x t)<sup>Hash(t,m)</sup> mod n) = </strong> {{ verification_2 }}<br><br>
 
-            <strong>Verification 1 and Verification 2, therefore Multi-Signature is verified</strong> 
+            <strong>Verification 1 and Verification 2, therefore Multi-Signature is verified</strong><br>
+            <strong>Now The Encrypted Message can be sent to the user</strong><br>
+            The message is calculated using the Officers Public key:<br>
+            {{officer_pub}}<br>
+            Encrypted Message = {{item_qty}}<sup>{{officer_pub[0]}}</sup> mod {{officer_pub[1]}}<br>
+            Encrypted Message = {{encrypted_message}}<br>
+            <strong>Decryption By the user</strong><br>
+            Now that the user has the encrypted message they can use their private keys to decrypt:<br>
+            Officers private key: {{officers_priv}}<br>
+            <strong>Decrypted Results:</strong><br>
+            Decrypted Message = {{encrypted_message}}<sup>{{officer_priv[0]}}</sup> mod {{officer_priv[1]}}<br>
+            Decrypted Message = {{decrypted_message}}<br>
+            Now the user knows that ID {{found_id}} contains {{decrypted_message}} number of items.
+
+            
+            
         </div>
         {% else %}
         <p>No matching item found in any inventory.</p>

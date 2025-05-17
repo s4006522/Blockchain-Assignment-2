@@ -173,7 +173,10 @@ def task3():
                                item_qty = item_qty,
                                hash = hash_input,
                                encrypted_message = encrypted_message,
-                               decrypted_message = decrypted_message)
+                               decrypted_message = decrypted_message,
+                               officer_pub = officer_pub,
+                               officer_priv=officer_priv,
+                               found_id = found_id)
     # Get the message and signature from the form
     # THIS IS  ATEST
 
