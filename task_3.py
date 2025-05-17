@@ -61,9 +61,9 @@ def task3():
                 data = json.load(f)
                 inventory_data = data.get(key, {})
 
-            # Flag to check if ID was found
+            # checking if the id was found
             id_found = False
-
+            # for loop to go over every item and see if record matches the item
             for record_id, record_value in inventory_data.items():
                 if record_value[:3] == found_id:
                     quantity = record_value[3:5]
@@ -71,7 +71,10 @@ def task3():
                     matched_record = record_value
                     matched_warehouse = record_value[-1]
                     id_found = True
-            
+                else:
+                    return render_template("notfound.html")
+            # if the item is found then it initiates the if statement and calculates all the required parts
+            # for the multisignature.
             if id_found:
                 Id_of_inv = int(keys["id_of_inventories"][inv])
                 r = int(keys["random_inventory_number"][inv])
@@ -80,7 +83,8 @@ def task3():
                 t_i = pow(r, pkg["e"], pkg_n)
 
                 t_aggregate = (t_aggregate * t_i) % pkg_n
-
+                # At the end of each calculation it adds the results to the partial sigs
+                # so that it can be used at a later date to verify the signatures.
                 partial_sigs.append({
                     "g_i": g_i,
                     "r_i": r,
@@ -91,26 +95,36 @@ def task3():
         except FileNotFoundError:
             flash(f"File {file} not found.", "error")
             continue
-    
-    item_qty = next(iter(result.values()))
+    if result:
+        item_qty = next(iter(result.values()))
 
+<<<<<<< HEAD
     # Adding the t_aggregate and search query into one message to hash and send to user who requested it
     hash_input = f"{t_aggregate}{item_qty}"
     hashed_message = hashlib.md5(hash_input.encode()).hexdigest()
     # converting to decimal
     hashed_message_decimal = int(hashed_message, 16)
+=======
+        # Consensus To validate all parties obtaining the correct same signature.
+        # Adding the t_aggregate and search query into one message to hash and send to user who requested it
+        hash_input = f"{t_aggregate}{item_qty}"
+        hashed_message = hashlib.md5(hash_input.encode()).hexdigest()
+        # converting to decimal
+        hashed_message_decimal = int(hashed_message, 16)
+>>>>>>> 2da107342424b38225a68100308a6e76f5848404
 
-    # Step: Compute s_j for each inventory
-    s_values = []
-    for sig in partial_sigs:
-        g_i = sig["g_i"]
-        r_i = sig["r_i"]
-        # maiking it easier to calculate s_j by already calculating the second half of the message.
-        ri_exp = pow(r_i, hashed_message_decimal, pkg_n)
-        # Calculating each signed message.
-        s_i = (g_i * ri_exp) % pkg_n
-        s_values.append(s_i)
+        # Step: Compute s_j for each inventory
+        s_values = []
+        for sig in partial_sigs:
+            g_i = sig["g_i"]
+            r_i = sig["r_i"]
+            # maiking it easier to calculate s_j by already calculating the second half of the message.
+            ri_exp = pow(r_i, hashed_message_decimal, pkg_n)
+            # Calculating each signed message.
+            s_i = (g_i * ri_exp) % pkg_n
+            s_values.append(s_i)
 
+<<<<<<< HEAD
     # Now calculating the aggregate of the signed message
     s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
     for sj in s_values:
@@ -118,29 +132,35 @@ def task3():
     
     # Consensus To validate all parties obtaining the correct same signature (t,s,m).
     # Encrypt the values using the officer's public key
+=======
+        # Now calculating the aggregate of the signed message
+        s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
+        for sj in s_values:
+            s = (s * sj) % pkg_n
+>>>>>>> 2da107342424b38225a68100308a6e76f5848404
 
-    # After everything is calulated (t, s, message)
-    # time to do the verification which after we can send to the user.
-    verification_1 = pow(s, pkg["e"], pkg_n)
+        # After everything is calulated (t, s, message)
+        # time to do the verification which after we can send to the user.
+        verification_1 = pow(s, pkg["e"], pkg_n)
 
-    # Verification Right:
-    g_product = 1
-    for sig in partial_sigs:
-        g_product = (g_product * sig["id"]) % pkg_n
+        # Verification Right:
+        i = 1
+        for sig in partial_sigs:
+            i = (i * sig["id"]) % pkg_n
 
-    t_power = pow(t_aggregate, hashed_message_decimal, pkg_n)
-    verification_2 = (g_product * t_power) % pkg_n
+        t_power = pow(t_aggregate, hashed_message_decimal, pkg_n)
+        verification_2 = (i * t_power) % pkg_n
 
-    signature_valid = False
-        
-    # making sure both verifications match if they do then signature valid is true.
-    if verification_1 == verification_2:
-        signature_valid = True
-        # after the signature is verified sending the encrypted values
-        # this is encrypted using the officers key
-        encrypted_message = pow(int(item_qty), officer['e'], officer_n)
+        signature_valid = False
+            
+        # making sure both verifications match if they do then signature valid is true.
+        if verification_1 == verification_2:
+            signature_valid = True
+            # after the signature is verified sending the encrypted values
+            # this is encrypted using the officers key
+            encrypted_message = pow(int(item_qty), officer['e'], officer_n)
 
-
+            decrypted_message = pow(encrypted_message, officer_priv[0], officer_priv[1])
 
 
     return render_template("task3.html", 
@@ -169,9 +189,14 @@ def task3():
                            item_qty = item_qty,
                            hash = hash_input,
                            encrypted_message = encrypted_message,
+<<<<<<< HEAD
                            )
 
     # Get the message and signature from the form
+=======
+                           decrypted_message = decrypted_message)
+# Get the message and signature from the form
+>>>>>>> 2da107342424b38225a68100308a6e76f5848404
 # THIS IS  ATEST
 
 if __name__ == '__main__':
