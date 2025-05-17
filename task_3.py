@@ -98,20 +98,12 @@ def task3():
     if result:
         item_qty = next(iter(result.values()))
 
-<<<<<<< HEAD
-    # Adding the t_aggregate and search query into one message to hash and send to user who requested it
-    hash_input = f"{t_aggregate}{item_qty}"
-    hashed_message = hashlib.md5(hash_input.encode()).hexdigest()
-    # converting to decimal
-    hashed_message_decimal = int(hashed_message, 16)
-=======
         # Consensus To validate all parties obtaining the correct same signature.
         # Adding the t_aggregate and search query into one message to hash and send to user who requested it
         hash_input = f"{t_aggregate}{item_qty}"
         hashed_message = hashlib.md5(hash_input.encode()).hexdigest()
         # converting to decimal
         hashed_message_decimal = int(hashed_message, 16)
->>>>>>> 2da107342424b38225a68100308a6e76f5848404
 
         # Step: Compute s_j for each inventory
         s_values = []
@@ -124,20 +116,10 @@ def task3():
             s_i = (g_i * ri_exp) % pkg_n
             s_values.append(s_i)
 
-<<<<<<< HEAD
-    # Now calculating the aggregate of the signed message
-    s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
-    for sj in s_values:
-        s = (s * sj) % pkg_n
-    
-    # Consensus To validate all parties obtaining the correct same signature (t,s,m).
-    # Encrypt the values using the officer's public key
-=======
         # Now calculating the aggregate of the signed message
         s = 1 # This is here to make sure that when calculating aggregate of s it doesnt include an error
         for sj in s_values:
             s = (s * sj) % pkg_n
->>>>>>> 2da107342424b38225a68100308a6e76f5848404
 
         # After everything is calulated (t, s, message)
         # time to do the verification which after we can send to the user.
@@ -163,41 +145,35 @@ def task3():
             decrypted_message = pow(encrypted_message, officer_priv[0], officer_priv[1])
 
 
-    return render_template("task3.html", 
-                           search_query=search_query, 
-                           results=result,
-                           partial_sigs=partial_sigs,
-                           aggregated_signature=t_aggregate,
-                           ID = Id_of_inv,
-                           r = r,
-                           g_i = g_i,
-                           t_i = t_i,
-                           pkg_n = pkg_n,
-                           pkg_phi_n = pkg_phi_n,
-                           pkg_d = pkg_d,
-                           pkg = pkg,
-                           matched_record = matched_record,
-                           matched_warehouse = matched_warehouse,
-                           signature_valid = signature_valid,
-                           hashed_message = hashed_message,
-                           hashed_message_decimal = hashed_message_decimal,
-                           s_j = s_i,
-                           s_values = s_values,
-                           s = s,
-                           verification_1 = verification_1,
-                           verification_2 = verification_2,
-                           item_qty = item_qty,
-                           hash = hash_input,
-                           encrypted_message = encrypted_message,
-<<<<<<< HEAD
-                           )
-
+        return render_template("task3.html", 
+                               search_query=search_query, 
+                               results=result,
+                               partial_sigs=partial_sigs,
+                               aggregated_signature=t_aggregate,
+                               ID = Id_of_inv,
+                               r = r,
+                               g_i = g_i,
+                               t_i = t_i,
+                               pkg_n = pkg_n,
+                               pkg_phi_n = pkg_phi_n,
+                               pkg_d = pkg_d,
+                               pkg = pkg,
+                               matched_record = matched_record,
+                               matched_warehouse = matched_warehouse,
+                               signature_valid = signature_valid,
+                               hashed_message = hashed_message,
+                               hashed_message_decimal = hashed_message_decimal,
+                               s_j = s_i,
+                               s_values = s_values,
+                               s = s,
+                               verification_1 = verification_1,
+                               verification_2 = verification_2,
+                               item_qty = item_qty,
+                               hash = hash_input,
+                               encrypted_message = encrypted_message,
+                               decrypted_message = decrypted_message)
     # Get the message and signature from the form
-=======
-                           decrypted_message = decrypted_message)
-# Get the message and signature from the form
->>>>>>> 2da107342424b38225a68100308a6e76f5848404
-# THIS IS  ATEST
+    # THIS IS  ATEST
 
 if __name__ == '__main__':
     app.run(debug=True)
