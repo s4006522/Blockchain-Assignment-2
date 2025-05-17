@@ -71,8 +71,7 @@ def task3():
                     matched_record = record_value
                     matched_warehouse = record_value[-1]
                     id_found = True
-                else:
-                    return render_template("notfound.html")
+                    break
             # if the item is found then it initiates the if statement and calculates all the required parts
             # for the multisignature.
             if id_found:
@@ -95,6 +94,9 @@ def task3():
         except FileNotFoundError:
             flash(f"File {file} not found.", "error")
             continue
+    if not result:
+     return render_template("notfound.html")
+    
     if result:
         item_qty = next(iter(result.values()))
 
